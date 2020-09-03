@@ -1,0 +1,37 @@
+---
+
+- name: apt update
+  apt: update_cache=yes
+  tags: zabbix
+
+
+- name: Install apache httpd
+  apt:
+    state: present
+    name:
+      - apache2
+      - libapache2-mod-php
+  tags: zabbix
+
+- name: Install mysql
+  apt:
+    state: present
+    name:
+      - mysql-server
+      - pyhton-mysqldb
+  tags: zabbix
+
+- name: Install php
+  apt:
+    state: present
+    name:
+      - php
+      - php-mbstring
+      - php-gd
+      - php-xml
+      - php-bcmath
+      - php-ldap
+      - php-mysql
+  tags: zabbix
+
+  

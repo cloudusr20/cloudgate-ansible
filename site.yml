@@ -1,0 +1,4 @@
+- name: main
+  hosts: webserver
+  roles:
+    - { role: base, tags: base }
