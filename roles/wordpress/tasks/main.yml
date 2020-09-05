@@ -1,0 +1,49 @@
+---
+
+- name: download wordpress
+  get_url:
+    url: https://wordpress.org/wordpress-{{ wp_version }}.tar.gz
+    dest: /var/www/html/wordpress/public_html/wordpress-{{ wp_version }}.tar.gz
+    mode: 0755
+  tags: wp
+
+- name: extract archive
+  unarchive:
+    src: /var/www/html/wordpress/public_html/wordpress-{{ wp_version }}.tar.gz
+    dest: /var/www/html/wordpress/public_html/
+    remote_src: yes
+  tags: wp
+
+- name: copy all file from wordpress to public_html
+  copy:
+    src: /var/www/html/wordpress/public_html/wordpress/
+    dest: /var/www/html/wordpress/public_html/
+    remote_src: yes
+  tags: wp
+
+- name: change permission
+  file:
+    path: /var/www/html/wordpress/public_html
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
+    mode: u+rwx,g+rx,o+rx
+  tags: wp
+
+- name: Fetch keys
+  command: curl https://api.wordpress.org/secret-key/1.1/salt/
+  args:
+    warn: false
+  register: "wp_salt"
+  tags: wp
+
+- name: copy wp conf file
+  template:
+    src: wp-config.php.j2
+    dest: /var/www/html/wordpress/public_html/wp-config.php
+    mode: "0755"
+    owner: www-data
+    group: www-data
+  tags: wp
+  notify: restart php

@@ -1,0 +1,27 @@
+---
+
+- name: install mysql package
+  apt:
+    state: present
+    name:
+      - mysql-server
+      - python-mysqldb
+  tags: zabbix-db
+
+- name: create zabbix database
+  mysql_db:
+    name: "{{ zb_db_name }}"
+    state: present
+    encoding: utf8
+    collation: utf8_bin
+  tags: zabbix-db
+  notify: restart mysql
+
+- name: create db user
+  mysql_user:
+    name: "{{ zb_db_user }}"
+    password: "{{ zb_db_pwd }}"
+    priv: "{{ zb_db_name }}.*:ALL"
+    host: localhost
+    state: present
+  tags: zabbix-db

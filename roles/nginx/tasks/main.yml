@@ -1,0 +1,36 @@
+---
+
+- name: install nginx
+  apt:
+    name: nginx
+    state: present
+  tags: nginx
+
+- name: create www dir
+  file:
+    path: /var/www/html/wordress/public_html
+    state: directory
+    mode: "0755"
+  tags: ngnix
+
+- name: Copy ngnix conf file for a word press
+  template:
+    src: default.conf
+    dest: /etc/nginx/sites-available/wordpress.conf
+    mode: "0755"
+  tags: nginx
+
+- name: rm default symlink
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+  tags: nginx
+
+- name: create a new symlink
+  file:
+    src: /etc/nginx/sites-available/wordpress.conf
+    dest: /etc/nginx/sites-enabled/wordpress.conf
+    state: link
+  notify: restart nginx
+  tags: nginx
